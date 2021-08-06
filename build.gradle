@@ -21,7 +21,7 @@ tasks.withType(JavaCompile).configureEach {
 
 
 group = 'cn.fabricmc'
-archivesBaseName = 'loomcn'
+archivesBaseName = project.name
 def baseVersion = '0.9'
 
 def ENV = System.getenv()
