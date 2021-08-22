@@ -54,17 +54,16 @@ public class LayeredMappingsDependency implements SelfResolvingDependency {
 
 	private final MappingContext mappingContext;
 	private final LayeredMappingSpec layeredMappingSpec;
-	private final String version;
+	private String version = null;
 
-	public LayeredMappingsDependency(MappingContext mappingContext, LayeredMappingSpec layeredMappingSpec, String version) {
+	public LayeredMappingsDependency(MappingContext mappingContext, LayeredMappingSpec layeredMappingSpec) {
 		this.mappingContext = mappingContext;
 		this.layeredMappingSpec = layeredMappingSpec;
-		this.version = version;
 	}
 
 	@Override
 	public Set<File> resolve() {
-		Path mappingsDir = mappingContext.mappingsProvider().getMappingsDir();
+		Path mappingsDir = mappingContext.workingDirectory().toPath();
 		Path mappingsFile = mappingsDir.resolve(String.format("%s.%s-%s.tiny", GROUP, MODULE, getVersion()));
 
 		if (!Files.exists(mappingsFile) || LoomGradlePlugin.refreshDeps) {
@@ -76,7 +75,7 @@ public class LayeredMappingsDependency implements SelfResolvingDependency {
 					Tiny2Writer tiny2Writer = new Tiny2Writer(writer, false);
 
 					MappingDstNsReorder nsReorder = new MappingDstNsReorder(tiny2Writer, Collections.singletonList(MappingNamespace.NAMED.stringValue()));
-					MappingSourceNsSwitch nsSwitch = new MappingSourceNsSwitch(nsReorder, MappingNamespace.INTERMEDIARY.stringValue());
+					MappingSourceNsSwitch nsSwitch = new MappingSourceNsSwitch(nsReorder, MappingNamespace.INTERMEDIARY.stringValue(), true);
 					mappings.accept(nsSwitch);
 
 					Files.deleteIfExists(mappingsFile);
@@ -115,6 +114,10 @@ public class LayeredMappingsDependency implements SelfResolvingDependency {
 
 	@Override
 	public String getVersion() {
+		if (version == null) {
+			version = layeredMappingSpec.getVersion(mappingContext);
+		}
+
 		return version;
 	}
 
@@ -129,7 +132,7 @@ public class LayeredMappingsDependency implements SelfResolvingDependency {
 
 	@Override
 	public Dependency copy() {
-		return new LayeredMappingsDependency(mappingContext, layeredMappingSpec, version);
+		return new LayeredMappingsDependency(mappingContext, layeredMappingSpec);
 	}
 
 	@Override
