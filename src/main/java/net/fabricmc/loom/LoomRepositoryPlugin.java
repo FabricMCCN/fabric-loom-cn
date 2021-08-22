@@ -42,7 +42,7 @@ public class LoomRepositoryPlugin implements Plugin<PluginAware> {
 	@Override
 	public void apply(@NotNull PluginAware target) {
 		if (target instanceof Settings settings) {
-			declareRepositories(settings.getDependencyResolutionManagement().getRepositories(), LoomFiles.create(settings));
+			declareRepositories(target, settings.getDependencyResolutionManagement().getRepositories(), LoomFiles.create(settings));
 
 			// leave a marker so projects don't try to override these
 			settings.getGradle().getPluginManager().apply(LoomRepositoryPlugin.class);
@@ -51,7 +51,7 @@ public class LoomRepositoryPlugin implements Plugin<PluginAware> {
 				return;
 			}
 
-			declareRepositories(project.getRepositories(), LoomFiles.create(project));
+			declareRepositories(target, project.getRepositories(), LoomFiles.create(project));
 		} else if (target instanceof Gradle) {
 			return;
 		} else {
@@ -59,7 +59,7 @@ public class LoomRepositoryPlugin implements Plugin<PluginAware> {
 		}
 	}
 
-	private void declareRepositories(RepositoryHandler repositories, LoomFiles files) {
+	private void declareRepositories(PluginAware target, RepositoryHandler repositories, LoomFiles files) {
 		repositories.maven(repo -> {
 			repo.setName("UserLocalRemappedMods");
 			repo.setUrl(files.getRemappedModCache());
