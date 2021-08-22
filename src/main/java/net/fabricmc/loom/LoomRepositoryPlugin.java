@@ -31,7 +31,10 @@ import org.gradle.api.artifacts.repositories.IvyArtifactRepository;
 import org.gradle.api.initialization.Settings;
 import org.gradle.api.invocation.Gradle;
 import org.gradle.api.plugins.PluginAware;
+import org.gradle.api.plugins.ExtensionAware;
 import org.jetbrains.annotations.NotNull;
+
+import net.fabricmc.loom.util.MirrorUtil;
 
 import net.fabricmc.loom.extension.LoomFiles;
 
@@ -63,11 +66,11 @@ public class LoomRepositoryPlugin implements Plugin<PluginAware> {
 		});
 		repositories.maven(repo -> {
 			repo.setName("Fabric");
-			repo.setUrl("https://maven.fabricmc.net/");
+			repo.setUrl(MirrorUtil.getFabricRepository((ExtensionAware) target));
 		});
 		repositories.maven(repo -> {
 			repo.setName("Mojang");
-			repo.setUrl("https://libraries.minecraft.net/");
+			repo.setUrl(MirrorUtil.getLibrariesBase((ExtensionAware) target));
 		});
 		repositories.mavenCentral();
 
