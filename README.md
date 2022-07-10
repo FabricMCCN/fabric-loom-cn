@@ -1,7 +1,8 @@
 # Fabric Loom
 
-Notice: The features in this project has been merge into the original project.
-注意：本项目的特性已经被合并到原始项目。
+**Notice: The features in this project has been merge into the original project.**
+
+**注意：本项目的特性已经被合并到原始项目。**
 
 A [Gradle](https://gradle.org/) plugin to setup a deobfuscated development environment for Minecraft mods. Primarily used in the Fabric toolchain.
 
